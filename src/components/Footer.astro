@@ -1,0 +1,79 @@
+---
+import { href, site } from '../lib/episodes';
+---
+<footer class="site-footer on-dark">
+  <div class="wrap footer-in">
+    <a class="f-brand" href={href()}>
+      <img src={href('img/logos/school.webp')} alt="" width="106" height="192" loading="lazy" decoding="async" />
+      <span>
+        <strong>{site.name}</strong>
+        <span>{site.school} <span class="num" dir="rtl">({site.grades})</span></span>
+      </span>
+    </a>
+    <nav class="f-nav" aria-label="روابط التذييل">
+      <a href={href()}>الحلقات</a>
+      <a href={href('about/')}>عن الركن</a>
+    </nav>
+    <div class="f-text">
+      <p class="principal">مديرة المدرسة: {site.principal}</p>
+      <p class="note">شخصيات القصص من وحي الخيال، ولا علاقة لها بأشخاص حقيقيين.</p>
+      <p class="rights">
+        © <span class="num">٢٠٢٦</span> جميع الحقوق محفوظة لمدرسة رياض الأزهار للبنات والأخصائيتين الاجتماعيتين.
+        يُسمح بالعرض لأغراض تربوية غير ربحية، ويُمنع التعديل أو إعادة النشر دون إذنٍ مسبق.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 40px;
+    background: var(--plum-900);
+    background-image: linear-gradient(160deg, var(--plum) 0%, var(--plum-900) 70%);
+    color: rgba(255, 255, 255, 0.86);
+    border-top: 4px solid var(--gold);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .footer-in {
+    display: grid;
+    gap: 18px;
+    padding-block: 30px 34px;
+    text-align: center;
+    justify-items: center;
+  }
+  .f-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-decoration: none;
+    text-align: start;
+  }
+  .f-brand img {
+    height: 58px;
+    width: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 6px 8px;
+  }
+  .f-brand strong { display: block; font-family: var(--display); font-size: 21px; line-height: 1.3; }
+  .f-brand span span { font-size: 14px; opacity: 0.85; }
+  .f-nav { display: flex; gap: 8px; }
+  .f-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .f-nav a:hover { background: rgba(255, 255, 255, 0.1); }
+  .f-text { display: grid; gap: 6px; max-width: 760px; font-size: 14px; line-height: 1.85; }
+  .principal { color: #fff; font-weight: 700; font-size: 15.5px; }
+  .note { color: var(--gold-50); }
+  .rights { color: rgba(255, 255, 255, 0.78); }
+</style>

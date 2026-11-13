@@ -1,0 +1,15 @@
+{
+  "name": "الركن الإرشادي",
+  "school": "مدرسة رياض الأزهار للبنات",
+  "grades": "٥–٩",
+  "specialists": ["هاجر الذهلي", "كوثر العجمي"],
+  "principal": "خصيبة الراشدي",
+  "hashtag": "#نحو_سلوك_مدرسي_إيجابي",
+  "siteUrl": "https://konan121.github.io/irshad/",
+  "templates": ["موقف وحلّ", "قيمة وقدوة", "سؤال وجواب", "مهارة اليوم", "توعوي"],
+  "logos": [
+    { "key": "moe", "alt": "شعار وزارة التعليم", "drive": "1ZzUD9oDnwNJybk7sNAOggLVfUSHD2KpI" },
+    { "key": "school", "alt": "شعار مدرسة رياض الأزهار للبنات", "drive": "14sOoK3y-Rnac6Ox-r89rcf9F8eL5syvG" },
+    { "key": "vision", "alt": "شعار رؤية عُمان 2040", "drive": "1U_SxHVxA4Dm6hbiiRYCW2Otke51nGk6a" }
+  ]
+}

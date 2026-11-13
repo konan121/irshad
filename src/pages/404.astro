@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import { href, site } from '../lib/episodes';
+---
+<Base title={`الصفحة غير موجودة — ${site.name}`} description="الصفحة المطلوبة غير موجودة.">
+  <Header slot="header" />
+  <div class="wrap nf">
+    <p class="code num">٤٠٤</p>
+    <h1>الصفحة غير موجودة</h1>
+    <p>ربما تغيّر الرابط أو كُتب بطريقة غير صحيحة.</p>
+    <a class="btn btn-primary" href={href()}>العودة إلى الحلقات</a>
+  </div>
+</Base>
+
+<style>
+  .nf { display: grid; justify-items: center; gap: 12px; text-align: center; padding-block: 60px 20px; }
+  .code { font-family: var(--display); font-size: 72px; font-weight: 700; color: var(--raspberry); line-height: 1; }
+  h1 { color: var(--plum); font-size: 30px; }
+</style>

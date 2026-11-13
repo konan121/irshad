@@ -1,0 +1,177 @@
+---
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Player from '../../components/Player.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import Icon from '../../components/Icon.astro';
+import {
+  type Episode, episodes, href, absolute, epPath, ogImage, driveView, drivePreview, site,
+} from '../../lib/episodes';
+import { arDate, arDuration, spokenDuration } from '../../lib/ar';
+
+export function getStaticPaths() {
+  return episodes.map((ep) => ({ params: { id: ep.id }, props: { ep } }));
+}
+
+const { ep } = Astro.props as { ep: Episode };
+const others = episodes.filter((e) => e.id !== ep.id).slice(0, 6);
+const pageUrl = absolute(epPath(ep));
+const waText = `🎬 «${ep.title}»\nمن سلسلة «${site.name}» — ${site.school}\n${pageUrl}\n${site.hashtag}`;
+const waLink = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+---
+<Base
+  title={`${ep.title} — ${site.name}`}
+  description={ep.summary}
+  path={epPath(ep)}
+  image={ogImage(ep)}
+  imageWidth={1200}
+  imageHeight={675}
+  imageAlt={`غلاف حلقة «${ep.title}» من سلسلة ${site.name}`}
+  type="video.other"
+>
+  <Header slot="header" current="episode" />
+
+  <div class="wrap ep-page">
+    <nav class="crumbs" aria-label="مسار التنقل">
+      <a href={href()}>الحلقات</a>
+      <span class="slash" aria-hidden="true">/</span>
+      <span aria-current="page">{ep.title}</span>
+    </nav>
+
+    <article class="ep">
+      <Player ep={ep} eager />
+      <div class="ep-info">
+        <h1>{ep.title}</h1>
+        <div class="meta">
+          <span class="chip">{ep.template}</span>
+          <span class="mi"><Icon name="clock" /><span class="sr-only">المدة: {spokenDuration(ep.duration)}</span><span class="num" aria-hidden="true">{arDuration(ep.duration)}</span></span>
+          <span class="mi"><Icon name="calendar" /><time datetime={ep.date}>{arDate(ep.date)}</time></span>
+        </div>
+        <p class="sum">{ep.summary}</p>
+
+        <div class="actions">
+          <a class="btn btn-primary" href={driveView(ep)} target="_blank" rel="noopener">
+            <Icon name="download" />تحميل 1080p
+          </a>
+          <a class="btn btn-plum" href={drivePreview(ep)} target="_blank" rel="noopener">
+            <Icon name="expand" />تشغيل بملء الشاشة
+          </a>
+          <a class="btn btn-wa" href={waLink} target="_blank" rel="noopener">
+            <Icon name="whatsapp" />مشاركة عبر واتساب
+          </a>
+          <button class="btn btn-ghost" type="button" data-copy={pageUrl}>
+            <Icon name="link" />نسخ الرابط
+          </button>
+        </div>
+        <p class="hint-line">زر التحميل يفتح الحلقة في Google Drive، ومنه يمكن اختيار «تنزيل».</p>
+      </div>
+    </article>
+  </div>
+
+  <section class="wrap section more" aria-labelledby="more-title">
+    <div class="section-head">
+      <h2 id="more-title">حلقات أخرى</h2>
+      <a class="all-link" href={href('#episodes')}>كل الحلقات</a>
+    </div>
+    <div class="grid more-grid">
+      {others.map((o) => <EpisodeCard ep={o} compact />)}
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { toast } from '../../scripts/toast';
+
+  async function copyText(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;opacity:0;font-size:16px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch { ok = false; }
+      ta.remove();
+      return ok;
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const ok = await copyText(btn.dataset.copy!);
+      toast(ok ? 'تم نسخ رابط الحلقة ✓' : 'تعذّر النسخ، انسخ الرابط من شريط العنوان');
+    });
+  });
+</script>
+
+<style>
+  .ep-page { padding-top: 14px; }
+  .crumbs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .crumbs a {
+    color: var(--raspberry-600);
+    font-weight: 700;
+    text-decoration: none;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .crumbs a:hover { text-decoration: underline; }
+  .crumbs .slash { opacity: 0.5; }
+  .crumbs [aria-current] { color: var(--ink); font-weight: 600; }
+
+  .ep {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-md);
+    display: grid;
+    gap: 18px;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+  .ep-info { display: grid; gap: 12px; padding: 0 6px 6px; }
+  .ep-info h1 { font-size: clamp(28px, 4.2vw, 40px); color: var(--plum); line-height: 1.3; }
+  .ep-info .meta { font-size: 14.5px; }
+  .ep-info .sum { font-size: 17px; line-height: 1.95; color: var(--ink); max-width: 70ch; }
+
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, max-content));
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .hint-line { font-size: 13px; color: var(--muted); }
+
+  .more-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 900px) { .more-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .all-link { font-weight: 700; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+  .all-link:hover { text-decoration: underline; }
+
+  @media (max-width: 860px) {
+    .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 480px) {
+    .actions { grid-template-columns: 1fr; gap: 8px; }
+  }
+  @media (max-width: 560px) {
+    .ep-page { padding-top: 10px; }
+    .ep { padding: 10px; gap: 14px; border-radius: 18px; }
+    .ep-info { padding: 0 4px 4px; }
+    .ep-info .sum { font-size: 16px; line-height: 1.9; }
+    .more-grid { grid-template-columns: 1fr; gap: 10px; }
+  }
+</style>

@@ -1,0 +1,95 @@
+---
+import '../styles/global.css';
+import Logos from '../components/Logos.astro';
+import Footer from '../components/Footer.astro';
+import { href, absolute, site } from '../lib/episodes';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+  image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
+  type?: 'website' | 'video.other' | 'article';
+}
+
+const {
+  title,
+  description,
+  path = '',
+  image = absolute('img/og/home.jpg'),
+  imageWidth = 1200,
+  imageHeight = 630,
+  imageAlt = `${site.name} — ${site.school}`,
+  type = 'website',
+} = Astro.props;
+
+const canonical = absolute(path);
+
+// الخطوط مستضافة داخل الموقع (public/fonts) ومقسّمة: العربية تُحمَّل أولًا، واللاتينية عند الحاجة فقط.
+const AR = 'U+0600-06FF,U+0750-077F,U+0870-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FEFC';
+const LAT = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD';
+const face = (family: string, file: string, weight: string, range: string) =>
+  `@font-face{font-family:'${family}';font-style:normal;font-display:swap;font-weight:${weight};src:url(${href('fonts/' + file)}) format('woff2');unicode-range:${range}}`;
+const fontCss = [
+  face('Cairo Variable', 'cairo-arabic.woff2', '200 1000', AR),
+  face('Cairo Variable', 'cairo-latin.woff2', '200 1000', LAT),
+  face('El Messiri Variable', 'messiri-arabic.woff2', '400 700', AR),
+  face('El Messiri Variable', 'messiri-latin.woff2', '400 700', LAT),
+].join('');
+---
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="ar_OM" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:secure_url" content={image} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content={String(imageWidth)} />
+    <meta property="og:image:height" content={String(imageHeight)} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    <meta name="theme-color" content="#5B2163" />
+    <link rel="manifest" href={href('manifest.webmanifest')} />
+    <link rel="icon" type="image/png" sizes="32x32" href={href('icons/favicon-32.png')} />
+    <link rel="apple-touch-icon" href={href('icons/apple-touch-icon.png')} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content={site.name} />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="preload" href={href('fonts/cairo-arabic.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={href('fonts/messiri-arabic.woff2')} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={fontCss}></style>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">تخطَّ إلى المحتوى</a>
+    <Logos />
+    <slot name="header" />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <div class="toast" aria-hidden="true" data-toast></div>
+    <div class="sr-only" role="status" aria-live="polite" data-live></div>
+  </body>
+</html>

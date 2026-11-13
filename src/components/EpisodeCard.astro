@@ -1,0 +1,46 @@
+---
+import { type Episode, href, epPath, posterSrc, tagsOf } from '../lib/episodes';
+import { arDate, arDuration, normalizeArabic, spokenDuration } from '../lib/ar';
+interface Props {
+  ep: Episode;
+  compact?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+const { ep, compact = false, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const search = normalizeArabic(`${ep.title} ${ep.summary} ${ep.template}`);
+---
+<article
+  class:list={['card', { compact }]}
+  data-tags={tagsOf(ep).join('|')}
+  data-search={compact ? undefined : search}
+>
+  <div class="card-media">
+    <img
+      src={posterSrc(ep, 480)}
+      srcset={`${posterSrc(ep, 480)} 480w, ${posterSrc(ep, 960)} 960w`}
+      sizes={compact ? '(max-width: 560px) 42vw, 360px' : '(max-width: 680px) 100vw, (max-width: 1040px) 50vw, 360px'}
+      alt=""
+      width="480"
+      height="270"
+      loading="lazy"
+      decoding="async"
+    />
+    <span class="play-mini" aria-hidden="true"></span>
+    <span class="dur num"><span class="sr-only">المدة: {spokenDuration(ep.duration)}</span><span aria-hidden="true">{arDuration(ep.duration)}</span></span>
+  </div>
+  <div class="card-body">
+    {!compact && (
+      <div class="meta">
+        <span class="chip">{ep.template}</span>
+        <time datetime={ep.date}>{arDate(ep.date)}</time>
+      </div>
+    )}
+    <H><a href={href(epPath(ep))}>{ep.title}</a></H>
+    {compact ? (
+      <div class="meta"><span>{ep.template}</span></div>
+    ) : (
+      <p class="sum">{ep.summary}</p>
+    )}
+  </div>
+</article>

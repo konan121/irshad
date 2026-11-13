@@ -1,0 +1,306 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Icon from '../components/Icon.astro';
+import { episodes, tagsOf, href, site } from '../lib/episodes';
+import { arNum, episodesPhrase } from '../lib/ar';
+
+const count = (t: string) => episodes.filter((e) => tagsOf(e).includes(t)).length;
+const link = (t: string) => href(`?t=${encodeURIComponent(t)}#episodes`);
+
+const templates = [
+  {
+    name: 'موقف وحلّ',
+    text: 'مشهد قصير من يوم مدرسي تقع فيه مشكلة سلوكية، ثم نرى التصرّف الصحيح وما تنصّ عليه اللائحة بلغة قريبة من الطالبات.',
+  },
+  {
+    name: 'قيمة وقدوة',
+    text: 'قيمة أخلاقية تظهر في موقف طالبة تختار الصواب، فتصبح قدوة لزميلاتها في الفصل والفسحة وفي العالم الرقمي.',
+  },
+  {
+    name: 'سؤال وجواب',
+    text: 'أسئلة تتكرّر على ألسنة الطالبات، تجيب عنها الأخصائية روضة بإيجاز ووضوح، مع الإجراءات التي تنظّمها اللائحة.',
+  },
+  {
+    name: 'مهارة اليوم',
+    text: 'مهارة عملية قصيرة تتعلّمها الطالبة وتطبّقها مباشرة، وتنتهي غالبًا بمهمة صغيرة للأسبوع.',
+  },
+];
+
+const uses = [
+  {
+    title: 'في الطابور الصباحي',
+    text: 'تُعرض الحلقة على شاشة الطابور أو يُبثّ صوتها في الإذاعة المدرسية، ثم يُطرح على الطالبات سؤال واحد للتفكير.',
+  },
+  {
+    title: 'في الحصص',
+    text: 'تفتتح المعلمة بها الحصة أو حصة النشاط، وتدير نقاشًا قصيرًا: ماذا حدث؟ ما التصرّف الصحيح؟ ماذا لو كنتُ مكانها؟',
+  },
+  {
+    title: 'مهمة الأسبوع',
+    text: 'كثير من الحلقات تُختم بمهمة صغيرة، تتابعها المعلمة والأخصائية مع الطالبات طوال الأسبوع.',
+  },
+  {
+    title: 'مع أولياء الأمور',
+    text: 'يُرسَل رابط الحلقة إلى مجموعات أولياء الأمور في واتساب، لتشاهدها الأسرة مع ابنتها وتتحدّث عنها في البيت.',
+  },
+];
+---
+<Base
+  title={`عن الركن — ${site.name}`}
+  description={`تعرّف على فكرة سلسلة ${site.name}، والأخصائيتين الاجتماعيتين ${site.specialists.join(' و')}، وقوالب الحلقات وطريقة استخدامها في الطابور والحصص.`}
+  path="about/"
+>
+  <Header slot="header" current="about" />
+
+  <div class="wrap about">
+    <section class="intro" aria-labelledby="about-title">
+      <p class="kicker">عن الركن</p>
+      <h1 id="about-title">ركنٌ صغير… لأثرٍ كبير</h1>
+      <p class="lead">
+        «{site.name}» سلسلة فيديوهات قصيرة بالعربية الفصحى، تُعِدّها الأخصائيتان الاجتماعيتان في
+        {site.school} <span class="num" dir="rtl">({site.grades})</span>
+        لدعم السلوك المدرسي الإيجابي. تتناول كل حلقة موقفًا من يوم الطالبة في دقيقة إلى ثلاث دقائق،
+        وتربطه بما تنصّ عليه اللائحة، وتنتهي غالبًا بمهمة صغيرة تُطبَّق خلال الأسبوع.
+      </p>
+      <p class="tag"><span class="num" dir="rtl">{site.hashtag}</span></p>
+    </section>
+
+    <section class="block" aria-labelledby="team-title">
+      <h2 id="team-title">الأخصائيتان الاجتماعيتان</h2>
+      <div class="team">
+        {site.specialists.map((name) => (
+          <div class="person">
+            <span class="avatar" aria-hidden="true">{name.trim().charAt(0)}</span>
+            <div>
+              <p class="p-name">{name}</p>
+              <p class="p-role">أخصائية اجتماعية — إعداد السلسلة</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p class="muted">مديرة المدرسة: {site.principal}</p>
+    </section>
+
+    <section class="block" aria-labelledby="tpl-title">
+      <h2 id="tpl-title">القوالب الأربعة</h2>
+      <p class="muted">لكل حلقة قالب يحدّد أسلوبها. اضغط على القالب لعرض حلقاته.</p>
+      <div class="tpl-grid">
+        {templates.map((t) => (
+          <a class="tpl" href={link(t.name)}>
+            <span class="tpl-icon" aria-hidden="true">✦</span>
+            <h3>{t.name}</h3>
+            <p>{t.text}</p>
+            <span class="tpl-count">{episodesPhrase(count(t.name))}</span>
+          </a>
+        ))}
+      </div>
+      <p class="muted extra">
+        وإلى جانبها حلقات <a href={link('توعوي')}>توعوية</a> بأسلوب قصصي مبتكر، كأن تتكلّم أشياء الفصل نفسها.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="use-title">
+      <h2 id="use-title">كيف تُستخدم الحلقات؟</h2>
+      <ol class="uses">
+        {uses.map((u, i) => (
+          <li>
+            <span class="u-num num" aria-hidden="true">{arNum(i + 1)}</span>
+            <div>
+              <h3>{u.title}</h3>
+              <p>{u.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="block" aria-labelledby="chars-title">
+      <h2 id="chars-title">شخصيات السلسلة</h2>
+      <p>
+        ترافق الطالباتِ في الحلقات <strong>الأخصائيةُ روضة</strong>، ومعها الطالبات
+        <strong>ريم</strong> و<strong>شهد</strong> و<strong>نور</strong> و<strong>مها</strong>.
+      </p>
+      <div class="notice" role="note">
+        <Icon name="info" />
+        <p>شخصيات القصص من وحي الخيال، ولا علاقة لها بأشخاص حقيقيين.</p>
+      </div>
+    </section>
+
+    <div class="cta">
+      <a class="btn btn-primary" href={href('#episodes')}>
+        <Icon name="grid" />شاهد كل الحلقات
+      </a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .about { display: grid; gap: 18px; padding-top: 22px; max-width: 980px; }
+  .intro {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 26px 24px;
+    box-shadow: var(--shadow-md);
+    display: grid;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .intro::after {
+    content: '';
+    position: absolute;
+    inset-inline-end: -60px;
+    top: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(226, 169, 59, 0.22), rgba(226, 169, 59, 0) 70%);
+  }
+  .kicker { color: var(--raspberry-600); font-weight: 800; font-size: 14px; }
+  .intro h1 { font-size: clamp(28px, 4.4vw, 40px); color: var(--plum); }
+  .lead { font-size: 17px; line-height: 1.95; max-width: 72ch; }
+  .tag {
+    justify-self: start;
+    background: var(--plum);
+    color: #fff;
+    border-radius: 999px;
+    padding: 2px 16px;
+    font-weight: 800;
+    font-size: 15px;
+    border: 2px solid var(--gold);
+  }
+
+  .block {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: 12px;
+  }
+  .block h2 {
+    font-size: 24px;
+    color: var(--plum);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .block h2::before {
+    content: '';
+    width: 6px;
+    height: 24px;
+    border-radius: 4px;
+    background: linear-gradient(var(--gold), var(--raspberry));
+  }
+  .muted { color: var(--muted); font-size: 15px; }
+
+  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+  .person {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--blush);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+  }
+  .avatar {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--plum), var(--raspberry));
+    color: #fff;
+    font-family: var(--display);
+    font-size: 24px;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--gold);
+  }
+  .p-name { font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--ink); }
+  .p-role { font-size: 14px; color: var(--muted); }
+
+  .tpl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 12px; }
+  .tpl {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 16px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, #fff, var(--blush));
+    color: var(--ink);
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .tpl:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #e2c4d3; }
+  .tpl-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--gold-50);
+    color: var(--plum);
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 700;
+    border: 1px solid #efd7a2;
+  }
+  .tpl h3 { font-size: 19px; color: var(--plum); }
+  .tpl p { font-size: 14.5px; color: var(--muted); line-height: 1.8; }
+  .tpl-count { font-size: 13px; font-weight: 800; color: var(--raspberry-600); margin-top: 2px; }
+  .extra a { font-weight: 700; }
+
+  .uses { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .uses li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+    background: var(--blush);
+    border: 1px solid var(--line);
+  }
+  .u-num {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--raspberry);
+    color: #fff;
+    font-weight: 800;
+    font-size: 17px;
+  }
+  .uses h3 { font-size: 18px; color: var(--plum); margin-bottom: 2px; }
+  .uses p { font-size: 15px; color: var(--ink); line-height: 1.85; }
+
+  .notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold-50);
+    border: 1px solid #efd7a2;
+    border-inline-start: 5px solid var(--gold);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--plum-700);
+    font-weight: 700;
+  }
+  .notice :global(svg) { width: 22px; height: 22px; flex: none; color: var(--plum); }
+
+  .cta { display: flex; justify-content: center; padding-block: 8px; }
+
+  @media (max-width: 560px) {
+    .about { padding-top: 14px; gap: 14px; }
+    .intro, .block { padding: 18px 16px; border-radius: 18px; }
+    .lead { font-size: 16px; }
+    .block h2 { font-size: 21px; }
+  }
+</style>
